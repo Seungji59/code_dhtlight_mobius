@@ -1,0 +1,217 @@
+[
+    {
+        "id": "1238567b031f2a23",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5cb77dfd6c68c322",
+        "type": "mqtt in",
+        "z": "1238567b031f2a23",
+        "name": "MQTT_IN / DHT_AE",
+        "topic": "SM/json",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "c2422ea7894bc70b",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 330,
+        "y": 280,
+        "wires": [
+            [
+                "74c8e2e01f64c66c"
+            ]
+        ]
+    },
+    {
+        "id": "74c8e2e01f64c66c",
+        "type": "function",
+        "z": "1238567b031f2a23",
+        "name": "{ temp: 00, hum: 00 }",
+        "func": "const cin = msg.payload?.pc?.[\"m2m:sgn\"]?.nev?.rep?.[\"m2m:cin\"];\nif (!cin) return null;\n\nlet con = cin.con;\nif (typeof con === \"string\") \n{\n  try { con = JSON.parse(con); }\n  catch(e) { return null; }\n}\n\nmsg.payload = { temp: con.temp, hum: con.hum };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 280,
+        "wires": [
+            [
+                "473dbab28653ac42",
+                "42a5eb0a7462e561"
+            ]
+        ]
+    },
+    {
+        "id": "08fc6f196767b9f9",
+        "type": "http request",
+        "z": "1238567b031f2a23",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://172.30.1.72:7599/Mobius/FAN_AE/CMD",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1170,
+        "y": 420,
+        "wires": [
+            [
+                "e88ac5bd21c65458"
+            ]
+        ]
+    },
+    {
+        "id": "473dbab28653ac42",
+        "type": "debug",
+        "z": "1238567b031f2a23",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "e88ac5bd21c65458",
+        "type": "debug",
+        "z": "1238567b031f2a23",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1340,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "42a5eb0a7462e561",
+        "type": "function",
+        "z": "1238567b031f2a23",
+        "name": "Temp → Fan / Command Generator",
+        "func": "const temp = msg.payload.temp;\nconst threshold = 22;\n\n// 새 상태 계산\nconst newState = (temp >= threshold) ? \"on\" : \"off\";\n\n// 이전 상태\nconst prevState = context.get(\"fanState\");\n\n// 처음 들어온 값이면 상태만 저장하고 전송 안 함(원하면 여기서 바로 보내도 됨)\nif (prevState === undefined) \n{\n  context.set(\"fanState\", newState);\n  return null;\n}\n\n// 상태 변화 없으면 전송 안 함\nif (prevState === newState) return null;\n\n// 상태 변화 발생 → 저장 + 전송 준비\ncontext.set(\"fanState\", newState);\n\n// Mobius CIN 생성 헤더\nmsg.headers = {\n  \"X-M2M-RI\": Date.now().toString(),\n  \"X-M2M-Origin\": \"SM2\",\n  \"X-M2M-RVI\": \"4\",\n  \"Content-Type\": \"application/json;ty=4\",\n  \"Accept\": \"application/json\"\n};\n\n// Mobius로 보낼 payload\nmsg.payload = {\n  \"m2m:cin\": {\n    \"con\": JSON.stringify({ fan: newState })\n  }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 420,
+        "wires": [
+            [
+                "08fc6f196767b9f9"
+            ]
+        ]
+    },
+    {
+        "id": "caa8a7302b1a5e6d",
+        "type": "mqtt in",
+        "z": "1238567b031f2a23",
+        "name": "MQTT_IN / FAN_AE",
+        "topic": "SM2/json",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "c2422ea7894bc70b",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 350,
+        "y": 620,
+        "wires": [
+            [
+                "1a89c268feeda98b"
+            ]
+        ]
+    },
+    {
+        "id": "1a89c268feeda98b",
+        "type": "function",
+        "z": "1238567b031f2a23",
+        "name": "{ \"fan\" : \"00\" }",
+        "func": "const cin = msg.payload?.pc?.[\"m2m:sgn\"]?.nev?.rep?.[\"m2m:cin\"];\nif (!cin) return null;\n\nlet con = cin.con;\nif (typeof con === \"string\") con = JSON.parse(con);\n\n\nmsg.payload = { fan: con.fan };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 620,
+        "wires": [
+            [
+                "2afb3de327e66655"
+            ]
+        ]
+    },
+    {
+        "id": "2afb3de327e66655",
+        "type": "debug",
+        "z": "1238567b031f2a23",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "c2422ea7894bc70b",
+        "type": "mqtt-broker",
+        "name": "MQTT in",
+        "broker": "172.30.1.72",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
