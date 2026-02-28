@@ -16,7 +16,21 @@ Mobius(oneM2M 플랫폼)로 전송하는 구조를 학습하기 위해 제작되
 - Mobius (oneM2M)
 - MQTT / HTTP
 
+## 🛠 기술 스택
+- Node.js v22
+- PostgreSQL v17
+- PostGIS
+- Moquitto 
+
 <img width="1164" height="684" alt="image" src="https://github.com/user-attachments/assets/2a55611e-fe5d-4f57-864e-4986391b9394" />
+
+https://github.com/user-attachments/assets/99d0ffd2-3198-4620-a0a6-6ff986e496f8
+
+
+
+
+
+
 
 
 <img width="1147" height="735" alt="image" src="https://github.com/user-attachments/assets/39d205be-f923-47b8-bff1-cee574b0cdb4" />
