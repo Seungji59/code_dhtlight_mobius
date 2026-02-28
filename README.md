@@ -34,3 +34,13 @@ https://github.com/user-attachments/assets/99d0ffd2-3198-4620-a0a6-6ff986e496f8
 ## 🛠 시연 영상
 https://github.com/user-attachments/assets/68d3db16-8525-42ba-b354-d48be339c535
 
+
+## Platform
+
+This project is designed to work with Mobius4 (oneM2M IoT Platform).
+
+Mobius4 GitHub:
+https://github.com/IoTKETI/Mobius
+
+Mobius4 is distributed under the BSD-3-Clause License.
+
