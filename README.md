@@ -1,4 +1,4 @@
-# code_dhtlight_mobius
+# Code_dhtlight_mobius
 Mobius 대회 출전을 위한 교육용 예제 코드입니다.
 
 DHT 센서 및 조도 센서 데이터를 수집하여  
