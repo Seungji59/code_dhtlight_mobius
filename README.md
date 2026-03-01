@@ -53,6 +53,13 @@ The goal of this project is to:
 
 ---
 
+## 🛠 시연 영상
+
+http://github.com/user-attachments/assets/68d3db16-8525-42ba-b354-d48be339c535
+
+---
+
+
 ## Technology Stack
 
 ### Device Layer
@@ -74,11 +81,6 @@ The goal of this project is to:
 - PostgreSQL v17
 - PostGIS
 
----
-
-## 🛠 시연 영상
-
-http://github.com/user-attachments/assets/68d3db16-8525-42ba-b354-d48be339c535
 
 ---
 ## Platform Reference  
